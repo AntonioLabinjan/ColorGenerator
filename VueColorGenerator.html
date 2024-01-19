@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Generator</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    button {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      position: fixed; 
+      top: 20px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+    }
+
+    #color-display {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #color-history {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .color-box {
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          colorHistory: [],
+          currentColor: '',
+        };
+      },
+      methods: {
+        generateColor() {
+          const letters = '0123456789ABCDEF';
+          let color = '#';
+          for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+          }
+
+          this.currentColor = color;
+          document.body.style.backgroundColor = color;
+
+          this.colorHistory.push(color);
+          this.updateColorHistory();
+        },
+        updateColorHistory() {
+          const colorHistoryContainer = document.getElementById('color-history');
+          colorHistoryContainer.innerHTML = '';
+
+          let row = document.createElement('div');
+          row.classList.add('color-row');
+
+          this.colorHistory.forEach((color, index) => {
+            const colorBox = document.createElement('div');
+            colorBox.classList.add('color-box');
+            colorBox.style.backgroundColor = color;
+            colorBox.addEventListener('click', () => this.copyColorCodeToClipboard(color));
+
+            row.appendChild(colorBox);
+
+            if ((index + 1) % 4 === 0) {
+              colorHistoryContainer.appendChild(row);
+              row = document.createElement('div');
+              row.classList.add('color-row');
+            }
+          });
+
+          if (row.childElementCount > 0) {
+            colorHistoryContainer.appendChild(row);
+          }
+        },
+        copyColorCodeToClipboard(selectedColor) {
+          const tempInput = document.createElement('input');
+          document.body.appendChild(tempInput);
+          tempInput.value = selectedColor;
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+
+          alert('Kod boje kopiran u međuspremnik: ' + selectedColor);
+
+          document.body.style.backgroundColor = selectedColor;
+          this.currentColor = selectedColor;
+        },
+      },
+      template: `
+        <div>
+          <button @click="generateColor">Generiraj boju</button>
+          <div id="color-display">{{ currentColor }}</div>
+          <div id="color-history"></div>
+        </div>
+      `,
+    });
+  </script>
+</body>
+</html>
