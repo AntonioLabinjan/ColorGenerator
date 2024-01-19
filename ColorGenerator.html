@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Generator</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    button {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    #color-display {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #color-history {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .color-box {
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="generateColor()">Generiraj boju</button>
+  <div id="color-display"></div>
+  <div id="color-history"></div>
+
+  <script>
+    const colorHistory = [];
+
+    function generateColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+
+      document.getElementById('color-display').textContent = color;
+      document.body.style.backgroundColor = color;
+
+      colorHistory.push(color);
+      updateColorHistory();
+    }
+
+    function updateColorHistory() {
+      const colorHistoryContainer = document.getElementById('color-history');
+      colorHistoryContainer.innerHTML = '';
+
+      colorHistory.forEach((color, index) => {
+        const colorBox = document.createElement('div');
+        colorBox.classList.add('color-box');
+        colorBox.style.backgroundColor = color;
+        colorBox.addEventListener('click', () => copyColorCodeToClipboard(color));
+
+        colorHistoryContainer.appendChild(colorBox);
+      });
+    }
+
+    function copyColorCodeToClipboard(selectedColor) {
+      const tempInput = document.createElement('input');
+      document.body.appendChild(tempInput);
+      tempInput.value = selectedColor;
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      alert('Kod boje kopiran u međuspremnik: ' + selectedColor);
+
+      document.body.style.backgroundColor = selectedColor;
+      document.getElementById('color-display').textContent = selectedColor;
+    }
+  </script>
+</body>
+</html>
